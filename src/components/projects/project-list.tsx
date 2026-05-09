@@ -1,8 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { type Project, calculateProject, TRADE_LABELS } from "@/lib/types";
+import { createClient } from "@/lib/supabase/client";
 import {
   Table,
   TableBody,
@@ -20,12 +22,45 @@ import {
   ArrowRight,
   FileText,
   DollarSign,
+  Trash2,
+  Loader2,
 } from "lucide-react";
+import { toast } from "sonner";
 
 type ViewMode = "table" | "cards";
 
-export function ProjectList({ projects }: { projects: Project[] }) {
+export function ProjectList({ projects: initialProjects }: { projects: Project[] }) {
+  const router = useRouter();
   const [viewMode, setViewMode] = useState<ViewMode>("table");
+  const [projects, setProjects] = useState(initialProjects);
+  const [deleting, setDeleting] = useState<string | null>(null);
+
+  const supabase = useMemo(() => {
+    try {
+      return createClient();
+    } catch {
+      return null;
+    }
+  }, []);
+
+  const handleDelete = async (id: string, e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!supabase) return;
+    if (!confirm("Delete this project? This cannot be undone.")) return;
+
+    setDeleting(id);
+    const { error } = await supabase.from("projects").delete().eq("id", id);
+    if (error) {
+      toast.error("Failed to delete: " + error.message);
+      setDeleting(null);
+    } else {
+      setProjects((prev) => prev.filter((p) => p.id !== id));
+      toast.success("Project deleted");
+      setDeleting(null);
+      router.refresh();
+    }
+  };
 
   if (projects.length === 0) {
     return (
@@ -68,15 +103,23 @@ export function ProjectList({ projects }: { projects: Project[] }) {
       </div>
 
       {viewMode === "table" ? (
-        <ProjectTable projects={projects} />
+        <ProjectTable projects={projects} onDelete={handleDelete} deleting={deleting} />
       ) : (
-        <ProjectCards projects={projects} />
+        <ProjectCards projects={projects} onDelete={handleDelete} deleting={deleting} />
       )}
     </div>
   );
 }
 
-function ProjectTable({ projects }: { projects: Project[] }) {
+function ProjectTable({
+  projects,
+  onDelete,
+  deleting,
+}: {
+  projects: Project[];
+  onDelete: (id: string, e: React.MouseEvent) => void;
+  deleting: string | null;
+}) {
   return (
     <div className="overflow-hidden rounded-lg border bg-white">
       <Table>
@@ -89,6 +132,7 @@ function ProjectTable({ projects }: { projects: Project[] }) {
             <TableHead className="text-right">Profit</TableHead>
             <TableHead className="text-right">Margin</TableHead>
             <TableHead>Status</TableHead>
+            <TableHead className="w-10" />
             <TableHead className="w-10" />
           </TableRow>
         </TableHeader>
@@ -141,6 +185,21 @@ function ProjectTable({ projects }: { projects: Project[] }) {
                     </Button>
                   </Link>
                 </TableCell>
+                <TableCell>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={(e) => onDelete(project.id, e)}
+                    disabled={deleting === project.id}
+                    className="text-red-500 hover:text-red-600"
+                  >
+                    {deleting === project.id ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <Trash2 className="h-4 w-4" />
+                    )}
+                  </Button>
+                </TableCell>
               </TableRow>
             );
           })}
@@ -150,13 +209,30 @@ function ProjectTable({ projects }: { projects: Project[] }) {
   );
 }
 
-function ProjectCards({ projects }: { projects: Project[] }) {
+function ProjectCards({
+  projects,
+  onDelete,
+  deleting,
+}: {
+  projects: Project[];
+  onDelete: (id: string, e: React.MouseEvent) => void;
+  deleting: string | null;
+}) {
   return (
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
       {projects.map((project) => {
         const calc = calculateProject(project);
         return (
-          <Link key={project.id} href={`/dashboard/${project.id}`}>
+          <div
+            key={project.id}
+            onClick={() => window.location.assign(`/dashboard/${project.id}`)}
+            className="cursor-pointer"
+            role="link"
+            tabIndex={0}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") window.location.assign(`/dashboard/${project.id}`);
+            }}
+          >
             <Card className="transition-shadow hover:shadow-md">
               <CardContent className="pt-6">
                 <div className="mb-3 flex items-start justify-between">
@@ -166,13 +242,28 @@ function ProjectCards({ projects }: { projects: Project[] }) {
                       {TRADE_LABELS[project.trade]}
                     </p>
                   </div>
-                  <Badge
-                    variant={
-                      project.status === "completed" ? "outline" : "secondary"
-                    }
-                  >
-                    {project.status}
-                  </Badge>
+                  <div className="flex items-center gap-1">
+                    <Badge
+                      variant={
+                        project.status === "completed" ? "outline" : "secondary"
+                      }
+                    >
+                      {project.status}
+                    </Badge>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={(e) => onDelete(project.id, e)}
+                      disabled={deleting === project.id}
+                      className="h-7 w-7 text-red-400 hover:text-red-600"
+                    >
+                      {deleting === project.id ? (
+                        <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                      ) : (
+                        <Trash2 className="h-3.5 w-3.5" />
+                      )}
+                    </Button>
+                  </div>
                 </div>
                 <div className="space-y-1 text-sm">
                   <div className="flex justify-between">
@@ -210,7 +301,7 @@ function ProjectCards({ projects }: { projects: Project[] }) {
                 </div>
               </CardContent>
             </Card>
-          </Link>
+          </div>
         );
       })}
     </div>
