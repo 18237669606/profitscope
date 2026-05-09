@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { type Project, calculateProject, TRADE_LABELS } from "@/lib/types";
 import { createClient } from "@/lib/supabase/client";
 import {
@@ -30,6 +31,17 @@ import {
   Trash2,
 } from "lucide-react";
 import { toast } from "sonner";
+
+const PDFDownloadLink = dynamic(
+  () =>
+    import("@react-pdf/renderer").then((mod) => mod.PDFDownloadLink),
+  { ssr: false }
+);
+
+const QuotePDF = dynamic(
+  () => import("@/components/pdf/quote-pdf").then((mod) => mod.QuotePDF),
+  { ssr: false }
+);
 
 export function ProjectDetail({ project: initial }: { project: Project }) {
   const router = useRouter();
@@ -108,12 +120,21 @@ export function ProjectDetail({ project: initial }: { project: Project }) {
           </div>
         </div>
         <div className="flex gap-2">
-          <Link href={`/dashboard/${project.id}/pdf`}>
-            <Button variant="outline" size="sm">
-              <FileDown className="mr-2 h-4 w-4" />
-              PDF
-            </Button>
-          </Link>
+          <PDFDownloadLink
+            document={<QuotePDF project={project} />}
+            fileName={`quote-${project.client_name.replace(/\s+/g, "-")}.pdf`}
+          >
+            {({ loading }: { loading: boolean }) => (
+              <Button variant="outline" size="sm" disabled={loading}>
+                {loading ? (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                ) : (
+                  <FileDown className="mr-2 h-4 w-4" />
+                )}
+                {loading ? "Generating..." : "PDF"}
+              </Button>
+            )}
+          </PDFDownloadLink>
           <Button
             variant="outline"
             size="sm"
