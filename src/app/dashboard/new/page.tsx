@@ -74,7 +74,10 @@ export default function NewProjectPage() {
   });
 
   const handleSubmit = async () => {
-    if (!user) return;
+    if (!user) {
+      toast.error("You must be signed in to create a project.");
+      return;
+    }
     setSubmitting(true);
 
     const { error } = await supabase.from("projects").insert({
