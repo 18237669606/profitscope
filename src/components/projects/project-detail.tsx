@@ -32,9 +32,9 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 
-const BlobProvider = dynamic(
+const PDFDownloadLink = dynamic(
   () =>
-    import("@react-pdf/renderer").then((mod) => mod.BlobProvider),
+    import("@react-pdf/renderer").then((mod) => mod.PDFDownloadLink),
   { ssr: false }
 );
 
@@ -423,51 +423,21 @@ function SafePdfButton({ project }: { project: Project }) {
         </Button>
       }
     >
-      <BlobProvider document={<QuotePDF project={project} />}>
-        {({
-          url,
-          loading,
-          error,
-        }: {
-          url: string | null;
-          loading: boolean;
-          error: Error | null;
-        }) => {
-          const handleDownload = () => {
-            if (!url) return;
-            const a = document.createElement("a");
-            a.href = url;
-            a.download = `quote-${project.client_name.replace(/\s+/g, "-")}.pdf`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-          };
-
-          if (error) {
-            return (
-              <Button variant="outline" size="sm" disabled>
-                <FileDown className="mr-2 h-4 w-4" />
-                Error
-              </Button>
-            );
-          }
-          return (
-            <Button
-              variant="outline"
-              size="sm"
-              disabled={loading}
-              onClick={handleDownload}
-            >
-              {loading ? (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              ) : (
-                <FileDown className="mr-2 h-4 w-4" />
-              )}
-              {loading ? "Generating..." : "PDF"}
-            </Button>
-          );
-        }}
-      </BlobProvider>
+      <PDFDownloadLink
+        document={<QuotePDF project={project} />}
+        fileName={`quote-${project.client_name.replace(/\s+/g, "-")}.pdf`}
+      >
+        {({ loading }: { loading: boolean }) => (
+          <Button variant="outline" size="sm" disabled={loading}>
+            {loading ? (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+              <FileDown className="mr-2 h-4 w-4" />
+            )}
+            {loading ? "Generating..." : "PDF"}
+          </Button>
+        )}
+      </PDFDownloadLink>
     </PdfErrorBoundary>
   );
 }
