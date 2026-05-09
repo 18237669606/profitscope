@@ -45,13 +45,10 @@ const QuotePDF = dynamic(
 
 export function ProjectDetail({ project: initial }: { project: Project }) {
   const router = useRouter();
-  const [clientError, setClientError] = useState(false);
-
   const supabase = useMemo(() => {
     try {
       return createClient();
     } catch {
-      setClientError(true);
       return null;
     }
   }, []);
