@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { Component, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import dynamic from "next/dynamic";
@@ -45,7 +45,17 @@ const QuotePDF = dynamic(
 
 export function ProjectDetail({ project: initial }: { project: Project }) {
   const router = useRouter();
-  const supabase = createClient();
+  const [clientError, setClientError] = useState(false);
+
+  const supabase = useMemo(() => {
+    try {
+      return createClient();
+    } catch {
+      setClientError(true);
+      return null;
+    }
+  }, []);
+
   const [project, setProject] = useState(initial);
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -60,6 +70,7 @@ export function ProjectDetail({ project: initial }: { project: Project }) {
   const calc = calculateProject(project);
 
   const handleSave = async () => {
+    if (!supabase) return;
     setSaving(true);
     const updates = {
       actual_hours: form.actual_hours ? Number(form.actual_hours) : null,
@@ -87,6 +98,7 @@ export function ProjectDetail({ project: initial }: { project: Project }) {
   };
 
   const handleDelete = async () => {
+    if (!supabase) return;
     if (!confirm("Delete this project? This cannot be undone.")) return;
 
     const { error } = await supabase
@@ -120,43 +132,7 @@ export function ProjectDetail({ project: initial }: { project: Project }) {
           </div>
         </div>
         <div className="flex gap-2">
-          <BlobProvider document={<QuotePDF project={project} />}>
-            {({ url, loading, error }: { url: string | null; loading: boolean; error: Error | null }) => {
-              const handleDownload = () => {
-                if (!url) return;
-                const a = document.createElement("a");
-                a.href = url;
-                a.download = `quote-${project.client_name.replace(/\s+/g, "-")}.pdf`;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-              };
-
-              if (error) {
-                return (
-                  <Button variant="outline" size="sm" disabled>
-                    <FileDown className="mr-2 h-4 w-4" />
-                    Error
-                  </Button>
-                );
-              }
-              return (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  disabled={loading}
-                  onClick={handleDownload}
-                >
-                  {loading ? (
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  ) : (
-                    <FileDown className="mr-2 h-4 w-4" />
-                  )}
-                  {loading ? "Generating..." : "PDF"}
-                </Button>
-              );
-            }}
-          </BlobProvider>
+          <SafePdfButton project={project} />
           <Button
             variant="outline"
             size="sm"
@@ -420,5 +396,81 @@ export function ProjectDetail({ project: initial }: { project: Project }) {
         )}
       </div>
     </div>
+  );
+}
+
+class PdfErrorBoundary extends Component<
+  { children: React.ReactNode; fallback: React.ReactNode },
+  { hasError: boolean }
+> {
+  constructor(props: { children: React.ReactNode; fallback: React.ReactNode }) {
+    super(props);
+    this.state = { hasError: false };
+  }
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+  render() {
+    if (this.state.hasError) return this.props.fallback;
+    return this.props.children;
+  }
+}
+
+function SafePdfButton({ project }: { project: Project }) {
+  return (
+    <PdfErrorBoundary
+      fallback={
+        <Button variant="outline" size="sm" disabled>
+          <FileDown className="mr-2 h-4 w-4" />
+          PDF
+        </Button>
+      }
+    >
+      <BlobProvider document={<QuotePDF project={project} />}>
+        {({
+          url,
+          loading,
+          error,
+        }: {
+          url: string | null;
+          loading: boolean;
+          error: Error | null;
+        }) => {
+          const handleDownload = () => {
+            if (!url) return;
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = `quote-${project.client_name.replace(/\s+/g, "-")}.pdf`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+          };
+
+          if (error) {
+            return (
+              <Button variant="outline" size="sm" disabled>
+                <FileDown className="mr-2 h-4 w-4" />
+                Error
+              </Button>
+            );
+          }
+          return (
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={loading}
+              onClick={handleDownload}
+            >
+              {loading ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : (
+                <FileDown className="mr-2 h-4 w-4" />
+              )}
+              {loading ? "Generating..." : "PDF"}
+            </Button>
+          );
+        }}
+      </BlobProvider>
+    </PdfErrorBoundary>
   );
 }
