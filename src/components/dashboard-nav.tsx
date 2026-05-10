@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useAuth } from "@/components/auth-provider";
-import { Menu, Plus, LayoutDashboard } from "lucide-react";
+import { Menu, Plus, LayoutDashboard, Home } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 export function DashboardNav() {
@@ -36,6 +36,12 @@ export function DashboardNav() {
             <SheetContent side="left" className="w-64">
               <nav className="mt-8 flex flex-col gap-2">
                 <Link
+                  href="/"
+                  className="rounded-md px-3 py-2 text-sm font-medium hover:bg-neutral-100"
+                >
+                  Home
+                </Link>
+                <Link
                   href="/dashboard"
                   className="rounded-md px-3 py-2 text-sm font-medium hover:bg-neutral-100"
                 >
@@ -51,12 +57,21 @@ export function DashboardNav() {
             </SheetContent>
           </Sheet>
 
-          <Link href="/dashboard" className="text-lg font-bold tracking-tight">
+          <Link href="/" className="text-lg font-bold tracking-tight">
             ProfitScope
           </Link>
 
           {/* Desktop nav */}
           <nav className="hidden md:flex md:items-center md:gap-1">
+            <Link href="/">
+              <Button
+                variant="ghost"
+                size="sm"
+              >
+                <Home className="mr-2 h-4 w-4" />
+                Home
+              </Button>
+            </Link>
             <Link href="/dashboard">
               <Button
                 variant={pathname === "/dashboard" ? "secondary" : "ghost"}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
@@ -41,7 +41,14 @@ type Step = 1 | 2;
 export default function NewProjectPage() {
   const router = useRouter();
   const { user } = useAuth();
-  const supabase = createClient();
+
+  const supabase = useMemo(() => {
+    try {
+      return createClient();
+    } catch {
+      return null;
+    }
+  }, []);
 
   const [step, setStep] = useState<Step>(1);
   const [submitting, setSubmitting] = useState(false);
@@ -74,7 +81,11 @@ export default function NewProjectPage() {
   });
 
   const handleSubmit = async () => {
-    if (!user) return;
+    if (!supabase) return;
+    if (!user) {
+      toast.error("You must be signed in to create a project.");
+      return;
+    }
     setSubmitting(true);
 
     const { error } = await supabase.from("projects").insert({
