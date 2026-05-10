@@ -4,7 +4,7 @@ import { type Project, calculateProject } from "@/lib/types";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Plus, DollarSign, TrendingUp, Percent, Briefcase } from "lucide-react";
+import { Plus, DollarSign, TrendingUp, Percent, Briefcase, Crown } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -42,8 +42,41 @@ export default async function DashboardPage() {
       {/* Monthly summary */}
       <MonthlySummary stats={monthlyStats} />
 
+      {/* Subscription status */}
+      <SubscriptionBanner />
+
       <ProjectList projects={projects ?? []} />
+
+      {/* Footer */}
+      <footer className="mt-12 border-t pt-6 text-center text-xs text-neutral-400">
+        Built for contractors who want to know their real profit.
+      </footer>
     </div>
+  );
+}
+
+function SubscriptionBanner() {
+  return (
+    <Card className="mb-6 border-blue-100 bg-gradient-to-r from-blue-50 to-white">
+      <CardContent className="flex items-center justify-between py-4">
+        <div className="flex items-center gap-3">
+          <div className="flex h-9 w-9 items-center justify-center rounded-full bg-blue-100">
+            <Crown className="h-4 w-4 text-blue-600" />
+          </div>
+          <div>
+            <p className="text-sm font-medium">Pro Plan</p>
+            <p className="text-xs text-neutral-500">$8/month</p>
+          </div>
+        </div>
+        <Link
+          href="https://gumroad.com"
+          target="_blank"
+          className="text-sm font-medium text-blue-600 hover:text-blue-700"
+        >
+          Manage Subscription &rarr;
+        </Link>
+      </CardContent>
+    </Card>
   );
 }
 
