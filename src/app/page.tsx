@@ -23,7 +23,7 @@ export default function LandingPage() {
               <Button variant="ghost">Sign In</Button>
             </Link>
             <Link href="https://gumroad.com" target="_blank">
-              <Button>Get Started — $8/mo</Button>
+              <Button>Get Started — $12/mo</Button>
             </Link>
           </div>
         </div>
@@ -95,8 +95,11 @@ export default function LandingPage() {
         </p>
         <Card className="mx-auto mt-8 max-w-sm">
           <CardContent className="pt-6">
-            <div className="text-4xl font-bold">$8</div>
+            <div className="text-4xl font-bold">$12</div>
             <div className="text-neutral-500">per month</div>
+            <div className="mt-2 rounded-md bg-blue-50 px-3 py-1.5 text-sm font-medium text-blue-700">
+              $10/mo billed annually — save 17%
+            </div>
             <ul className="mt-6 space-y-2 text-left text-sm text-neutral-600">
               <li>✓ Unlimited projects</li>
               <li>✓ Profit calculations</li>

@@ -65,7 +65,7 @@ function SubscriptionBanner() {
           </div>
           <div>
             <p className="text-sm font-medium">Pro Plan</p>
-            <p className="text-xs text-neutral-500">$8/month</p>
+            <p className="text-xs text-neutral-500">$12/mo or $10/mo annual</p>
           </div>
         </div>
         <Link
