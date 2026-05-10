@@ -21,7 +21,6 @@ import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import {
   ArrowLeft,
-  FileDown,
   Save,
   Loader2,
   DollarSign,
@@ -32,15 +31,20 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 
-const PDFDownloadLink = dynamic(
+const PdfDownloadButton = dynamic(
   () =>
-    import("@react-pdf/renderer").then((mod) => mod.PDFDownloadLink),
-  { ssr: false }
-);
-
-const QuotePDF = dynamic(
-  () => import("@/components/pdf/quote-pdf").then((mod) => mod.QuotePDF),
-  { ssr: false }
+    import("@/components/projects/pdf-download-button").then(
+      (mod) => mod.PdfDownloadButton
+    ),
+  {
+    ssr: false,
+    loading: () => (
+      <Button variant="outline" size="sm" disabled>
+        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+        Loading...
+      </Button>
+    ),
+  }
 );
 
 export function ProjectDetail({ project: initial }: { project: Project }) {
@@ -120,21 +124,7 @@ export function ProjectDetail({ project: initial }: { project: Project }) {
           </div>
         </div>
         <div className="flex gap-2">
-          <PDFDownloadLink
-            document={<QuotePDF project={project} />}
-            fileName={`quote-${project.client_name.replace(/\s+/g, "-")}.pdf`}
-          >
-            {({ loading }: { loading: boolean }) => (
-              <Button variant="outline" size="sm" disabled={loading}>
-                {loading ? (
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                ) : (
-                  <FileDown className="mr-2 h-4 w-4" />
-                )}
-                {loading ? "Generating..." : "PDF"}
-              </Button>
-            )}
-          </PDFDownloadLink>
+          <PdfDownloadButton project={project} />
           <Button
             variant="outline"
             size="sm"
