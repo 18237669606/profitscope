@@ -11,7 +11,7 @@ import { Calculator, FileText, TrendingUp } from "lucide-react";
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-neutral-50">
+    <div className="min-h-screen overflow-x-hidden bg-gradient-to-b from-white to-neutral-50">
       {/* Nav */}
       <header className="border-b">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-4">
@@ -31,23 +31,23 @@ export default function LandingPage() {
 
       {/* Hero */}
       <section className="mx-auto max-w-5xl px-4 py-24 text-center">
-        <h1 className="text-5xl font-bold tracking-tight sm:text-6xl">
+        <h1 className="text-3xl font-bold tracking-tight sm:text-5xl md:text-6xl">
           Know What Every Job
           <br />
           <span className="text-blue-600">Actually Pays You</span>
         </h1>
-        <p className="mx-auto mt-6 max-w-2xl text-lg text-neutral-600">
+        <p className="mx-auto mt-6 max-w-2xl text-base text-neutral-600 sm:text-lg">
           You quote jobs all day. But do you know your real profit after
           materials and subs? ProfitScope does the math so you can stop guessing.
         </p>
-        <div className="mt-10 flex items-center justify-center gap-4">
+        <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row sm:gap-4">
           <Link href="https://gumroad.com" target="_blank">
-            <Button size="lg" className="px-8">
+            <Button size="lg" className="w-full px-8 sm:w-auto">
               Start Free Trial
             </Button>
           </Link>
           <Link href="/login">
-            <Button size="lg" variant="outline">
+            <Button size="lg" variant="outline" className="w-full sm:w-auto">
               Sign In
             </Button>
           </Link>
