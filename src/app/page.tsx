@@ -16,7 +16,7 @@ export default function LandingPage() {
                 Sign In
               </Button>
             </Link>
-            <Link href="https://gumroad.com" target="_blank">
+            <Link href="https://howlwind1788.gumroad.com/l/stkml" target="_blank">
               <Button size="sm">Get Started — $12/mo</Button>
             </Link>
           </div>
@@ -36,7 +36,7 @@ export default function LandingPage() {
             built for contractors who want to stop guessing and start earning.
           </p>
           <div className="mt-8 flex items-center justify-center gap-3">
-            <Link href="https://gumroad.com" target="_blank">
+            <Link href="https://howlwind1788.gumroad.com/l/stkml" target="_blank">
               <Button size="lg" className="px-8">
                 Start Free Trial
               </Button>
@@ -87,7 +87,7 @@ export default function LandingPage() {
             $10/mo billed annually. No tiers, no hidden fees. Unlimited projects.
           </p>
           <div className="mt-6">
-            <Link href="https://gumroad.com" target="_blank">
+            <Link href="https://howlwind1788.gumroad.com/l/stkml" target="_blank">
               <Button size="lg" className="px-10">
                 Get Started
               </Button>
