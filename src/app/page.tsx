@@ -42,7 +42,7 @@ export default function LandingPage() {
               </Button>
             </Link>
             <Link href="/login">
-              <Button size="lg" variant="outline" className="border-slate-600 text-slate-300 hover:bg-slate-800 hover:text-white">
+              <Button size="lg" variant="ghost" className="text-slate-400 hover:bg-slate-800 hover:text-slate-200">
                 Sign In
               </Button>
             </Link>
