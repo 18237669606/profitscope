@@ -67,22 +67,25 @@ export function DashboardNav() {
               <Button
                 variant="ghost"
                 size="sm"
+                className={pathname === "/" ? "text-amber-500 hover:text-amber-400" : ""}
               >
                 Home
               </Button>
             </Link>
             <Link href="/dashboard">
               <Button
-                variant={pathname === "/dashboard" ? "secondary" : "ghost"}
+                variant="ghost"
                 size="sm"
+                className={pathname === "/dashboard" ? "text-amber-500 hover:text-amber-400" : ""}
               >
                 Projects
               </Button>
             </Link>
             <Link href="/dashboard/new">
               <Button
-                variant={pathname === "/dashboard/new" ? "secondary" : "ghost"}
+                variant="ghost"
                 size="sm"
+                className={pathname === "/dashboard/new" ? "text-amber-500 hover:text-amber-400" : ""}
               >
                 <Plus className="mr-1.5 h-4 w-4" />
                 New

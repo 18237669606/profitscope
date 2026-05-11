@@ -12,7 +12,7 @@ export default function LandingPage() {
           </span>
           <div className="flex items-center gap-3">
             <Link href="/login">
-              <Button variant="outline" size="sm" className="border-slate-600 text-slate-400 hover:text-slate-200 hover:bg-slate-800">
+              <Button variant="outline" size="sm" className="border-slate-600 text-slate-400 bg-transparent hover:text-slate-200 hover:bg-slate-800">
                 Sign In
               </Button>
             </Link>
@@ -42,7 +42,7 @@ export default function LandingPage() {
               </Button>
             </Link>
             <Link href="/login">
-              <Button size="lg" variant="outline" className="border-slate-600 text-slate-400 hover:text-slate-200 hover:bg-slate-800">
+              <Button size="lg" variant="outline" className="border-slate-600 text-slate-400 bg-transparent hover:text-slate-200 hover:bg-slate-800">
                 Sign In
               </Button>
             </Link>
