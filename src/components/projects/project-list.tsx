@@ -21,7 +21,6 @@ import {
   List,
   ArrowRight,
   FileText,
-  DollarSign,
   Trash2,
   Loader2,
 } from "lucide-react";
@@ -64,18 +63,15 @@ export function ProjectList({ projects: initialProjects }: { projects: Project[]
 
   if (projects.length === 0) {
     return (
-      <Card className="border-dashed">
+      <Card className="border-dashed border-border">
         <CardContent className="flex flex-col items-center justify-center py-16 text-center">
-          <FileText className="mb-4 h-12 w-12 text-neutral-300" />
-          <h3 className="text-lg font-medium">No projects yet</h3>
-          <p className="mt-1 text-sm text-neutral-500">
+          <FileText className="mb-3 h-10 w-10 text-muted-foreground/40" />
+          <h3 className="text-base font-medium">No projects yet</h3>
+          <p className="mt-1 text-sm text-muted-foreground">
             Create your first project to start tracking profits.
           </p>
           <Link href="/dashboard/new" className="mt-4">
-            <Button>
-              <DollarSign className="mr-2 h-4 w-4" />
-              Create Project
-            </Button>
+            <Button size="sm">Create Project</Button>
           </Link>
         </CardContent>
       </Card>
@@ -85,11 +81,12 @@ export function ProjectList({ projects: initialProjects }: { projects: Project[]
   return (
     <div>
       {/* View toggle */}
-      <div className="mb-4 flex justify-end gap-1">
+      <div className="mb-3 flex justify-end gap-0.5">
         <Button
           variant={viewMode === "table" ? "secondary" : "ghost"}
           size="icon"
           onClick={() => setViewMode("table")}
+          className="h-8 w-8"
         >
           <List className="h-4 w-4" />
         </Button>
@@ -97,6 +94,7 @@ export function ProjectList({ projects: initialProjects }: { projects: Project[]
           variant={viewMode === "cards" ? "secondary" : "ghost"}
           size="icon"
           onClick={() => setViewMode("cards")}
+          className="h-8 w-8"
         >
           <LayoutGrid className="h-4 w-4" />
         </Button>
@@ -121,82 +119,84 @@ function ProjectTable({
   deleting: string | null;
 }) {
   return (
-    <div className="overflow-hidden rounded-lg border bg-white">
+    <div className="overflow-hidden rounded border border-border">
       <Table>
         <TableHeader>
-          <TableRow>
-            <TableHead>Client</TableHead>
-            <TableHead>Trade</TableHead>
-            <TableHead className="text-right">Quote</TableHead>
-            <TableHead className="text-right">Cost</TableHead>
-            <TableHead className="text-right">Profit</TableHead>
-            <TableHead className="text-right">Margin</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead className="w-10" />
-            <TableHead className="w-10" />
+          <TableRow className="border-border hover:bg-transparent">
+            <TableHead className="text-xs font-medium text-muted-foreground">Client</TableHead>
+            <TableHead className="text-xs font-medium text-muted-foreground">Trade</TableHead>
+            <TableHead className="text-right text-xs font-medium text-muted-foreground">Quote</TableHead>
+            <TableHead className="text-right text-xs font-medium text-muted-foreground">Cost</TableHead>
+            <TableHead className="text-right text-xs font-medium text-muted-foreground">Profit</TableHead>
+            <TableHead className="text-right text-xs font-medium text-muted-foreground">Margin</TableHead>
+            <TableHead className="text-xs font-medium text-muted-foreground">Status</TableHead>
+            <TableHead className="w-8" />
+            <TableHead className="w-8" />
           </TableRow>
         </TableHeader>
         <TableBody>
           {projects.map((project) => {
             const calc = calculateProject(project);
             return (
-              <TableRow key={project.id}>
-                <TableCell className="font-medium">
+              <TableRow key={project.id} className="border-border">
+                <TableCell className="py-2.5 text-sm font-medium">
                   {project.client_name}
                 </TableCell>
-                <TableCell className="text-neutral-500">
+                <TableCell className="py-2.5 text-sm text-muted-foreground">
                   {TRADE_LABELS[project.trade]}
                 </TableCell>
-                <TableCell className="text-right">
+                <TableCell className="py-2.5 text-right text-sm tabular-nums">
                   ${calc.quote_amount.toLocaleString()}
                 </TableCell>
-                <TableCell className="text-right text-neutral-500">
+                <TableCell className="py-2.5 text-right text-sm tabular-nums text-muted-foreground">
                   ${calc.total_cost.toLocaleString()}
                 </TableCell>
                 <TableCell
-                  className={`text-right font-medium ${
+                  className={`py-2.5 text-right text-sm font-medium tabular-nums ${
                     calc.net_profit >= 0
-                      ? "text-emerald-600"
+                      ? "text-emerald-500"
                       : "text-red-500"
                   }`}
                 >
                   ${calc.net_profit.toLocaleString()}
                 </TableCell>
-                <TableCell className="text-right">
+                <TableCell className="py-2.5 text-right text-sm">
                   <Badge
                     variant={calc.profit_margin >= 20 ? "default" : "secondary"}
+                    className="text-xs"
                   >
                     {calc.profit_margin}%
                   </Badge>
                 </TableCell>
-                <TableCell>
+                <TableCell className="py-2.5 text-sm">
                   <Badge
                     variant={
                       project.status === "completed" ? "outline" : "secondary"
                     }
+                    className="text-xs"
                   >
                     {project.status}
                   </Badge>
                 </TableCell>
-                <TableCell>
+                <TableCell className="py-2.5">
                   <Link href={`/dashboard/${project.id}`}>
-                    <Button variant="ghost" size="icon">
-                      <ArrowRight className="h-4 w-4" />
+                    <Button variant="ghost" size="icon" className="h-7 w-7">
+                      <ArrowRight className="h-3.5 w-3.5" />
                     </Button>
                   </Link>
                 </TableCell>
-                <TableCell>
+                <TableCell className="py-2.5">
                   <Button
                     variant="ghost"
                     size="icon"
                     onClick={(e) => onDelete(project.id, e)}
                     disabled={deleting === project.id}
-                    className="text-red-500 hover:text-red-600"
+                    className="h-7 w-7 text-red-500 hover:text-red-400"
                   >
                     {deleting === project.id ? (
-                      <Loader2 className="h-4 w-4 animate-spin" />
+                      <Loader2 className="h-3.5 w-3.5 animate-spin" />
                     ) : (
-                      <Trash2 className="h-4 w-4" />
+                      <Trash2 className="h-3.5 w-3.5" />
                     )}
                   </Button>
                 </TableCell>
@@ -219,7 +219,7 @@ function ProjectCards({
   deleting: string | null;
 }) {
   return (
-    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
       {projects.map((project) => {
         const calc = calculateProject(project);
         return (
@@ -233,12 +233,12 @@ function ProjectCards({
               if (e.key === "Enter") window.location.assign(`/dashboard/${project.id}`);
             }}
           >
-            <Card className="transition-shadow hover:shadow-md">
-              <CardContent className="pt-6">
+            <Card className="border-border bg-card transition-colors hover:border-amber-500/30">
+              <CardContent className="pt-4">
                 <div className="mb-3 flex items-start justify-between">
                   <div>
-                    <h3 className="font-semibold">{project.client_name}</h3>
-                    <p className="text-sm text-neutral-500">
+                    <h3 className="text-sm font-semibold">{project.client_name}</h3>
+                    <p className="text-xs text-muted-foreground">
                       {TRADE_LABELS[project.trade]}
                     </p>
                   </div>
@@ -247,6 +247,7 @@ function ProjectCards({
                       variant={
                         project.status === "completed" ? "outline" : "secondary"
                       }
+                      className="text-xs"
                     >
                       {project.status}
                     </Badge>
@@ -255,7 +256,7 @@ function ProjectCards({
                       size="icon"
                       onClick={(e) => onDelete(project.id, e)}
                       disabled={deleting === project.id}
-                      className="h-7 w-7 text-red-400 hover:text-red-600"
+                      className="h-7 w-7 text-red-500 hover:text-red-400"
                     >
                       {deleting === project.id ? (
                         <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -267,21 +268,21 @@ function ProjectCards({
                 </div>
                 <div className="space-y-1 text-sm">
                   <div className="flex justify-between">
-                    <span className="text-neutral-500">Quote</span>
-                    <span className="font-medium">
+                    <span className="text-muted-foreground">Quote</span>
+                    <span className="font-medium tabular-nums">
                       ${calc.quote_amount.toLocaleString()}
                     </span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-neutral-500">Cost</span>
-                    <span>${calc.total_cost.toLocaleString()}</span>
+                    <span className="text-muted-foreground">Cost</span>
+                    <span className="tabular-nums">${calc.total_cost.toLocaleString()}</span>
                   </div>
-                  <div className="flex justify-between border-t pt-1">
-                    <span className="font-medium">Profit</span>
+                  <div className="flex justify-between border-t border-border pt-1">
+                    <span className="font-medium text-xs">Profit</span>
                     <span
-                      className={`font-bold ${
+                      className={`text-sm font-bold tabular-nums ${
                         calc.net_profit >= 0
-                          ? "text-emerald-600"
+                          ? "text-emerald-500"
                           : "text-red-500"
                       }`}
                     >
@@ -289,11 +290,12 @@ function ProjectCards({
                     </span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-neutral-500">Margin</span>
+                    <span className="text-muted-foreground">Margin</span>
                     <Badge
                       variant={
                         calc.profit_margin >= 20 ? "default" : "secondary"
                       }
+                      className="text-xs"
                     >
                       {calc.profit_margin}%
                     </Badge>

@@ -23,10 +23,6 @@ import {
   FileDown,
   Save,
   Loader2,
-  DollarSign,
-  Clock,
-  TrendingUp,
-  Percent,
   Trash2,
 } from "lucide-react";
 import { toast } from "sonner";
@@ -103,27 +99,27 @@ export function ProjectDetail({ project: initial }: { project: Project }) {
   return (
     <div className="mx-auto max-w-2xl">
       {/* Header */}
-      <div className="mb-6 flex items-center justify-between">
+      <div className="mb-5 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Link href="/dashboard">
-            <Button variant="ghost" size="icon">
+            <Button variant="ghost" size="icon" className="h-8 w-8">
               <ArrowLeft className="h-4 w-4" />
             </Button>
           </Link>
           <div>
-            <h1 className="text-2xl font-bold">{project.client_name}</h1>
-            <p className="text-sm text-neutral-500">
+            <h1 className="text-lg font-bold tracking-tight">{project.client_name}</h1>
+            <p className="text-xs text-muted-foreground">
               {project.client_address}
             </p>
           </div>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-1.5">
           <SafePdfButton project={project} calc={calc} />
           <Button
-            variant="outline"
-            size="sm"
+            variant="ghost"
+            size="icon"
             onClick={handleDelete}
-            className="text-red-500 hover:text-red-600"
+            className="h-8 w-8 text-red-500 hover:text-red-400"
           >
             <Trash2 className="h-4 w-4" />
           </Button>
@@ -131,34 +127,35 @@ export function ProjectDetail({ project: initial }: { project: Project }) {
       </div>
 
       {/* Project Info Card */}
-      <Card className="mb-6">
-        <CardContent className="pt-6">
-          <div className="grid grid-cols-2 gap-4 text-sm">
+      <Card className="mb-4 border-border bg-card">
+        <CardContent className="py-3">
+          <div className="grid grid-cols-2 gap-3 text-sm">
             <div>
-              <span className="text-neutral-500">Trade</span>
+              <span className="text-xs text-muted-foreground">Trade</span>
               <p className="font-medium">{TRADE_LABELS[project.trade]}</p>
             </div>
             <div>
-              <span className="text-neutral-500">Status</span>
+              <span className="text-xs text-muted-foreground">Status</span>
               <p>
                 <Badge
                   variant={
                     project.status === "completed" ? "outline" : "secondary"
                   }
+                  className="text-xs"
                 >
                   {project.status}
                 </Badge>
               </p>
             </div>
             <div>
-              <span className="text-neutral-500">Hourly Rate</span>
-              <p className="font-medium">
+              <span className="text-xs text-muted-foreground">Hourly Rate</span>
+              <p className="font-medium tabular-nums">
                 ${project.hourly_rate}/hr
               </p>
             </div>
             <div>
-              <span className="text-neutral-500">Created</span>
-              <p className="text-neutral-500">
+              <span className="text-xs text-muted-foreground">Created</span>
+              <p className="text-muted-foreground">
                 {new Date(project.created_at).toLocaleDateString()}
               </p>
             </div>
@@ -166,35 +163,32 @@ export function ProjectDetail({ project: initial }: { project: Project }) {
         </CardContent>
       </Card>
 
-      {/* Hours: Estimated vs Actual */}
-      <Card className="mb-6">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-lg">
-            <Clock className="h-5 w-5 text-blue-600" />
-            Hours
-          </CardTitle>
+      {/* Hours Card */}
+      <Card className="mb-4 border-border bg-card">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-sm font-medium">Hours</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 gap-4 text-center">
             <div>
-              <p className="text-sm text-neutral-500">Estimated</p>
-              <p className="text-2xl font-bold">{project.estimated_hours}h</p>
+              <p className="text-xs text-muted-foreground">Estimated</p>
+              <p className="text-xl font-bold tabular-nums">{project.estimated_hours}h</p>
             </div>
             <div>
-              <p className="text-sm text-neutral-500">Actual</p>
+              <p className="text-xs text-muted-foreground">Actual</p>
               {editing ? (
                 <Input
                   type="number"
                   min="0"
                   step="0.5"
-                  className="mt-1 text-center"
+                  className="mt-1 text-center text-sm"
                   value={form.actual_hours}
                   onChange={(e) =>
                     setForm({ ...form, actual_hours: e.target.value })
                   }
                 />
               ) : (
-                <p className="text-2xl font-bold">
+                <p className="text-xl font-bold tabular-nums">
                   {project.actual_hours != null
                     ? `${project.actual_hours}h`
                     : "—"}
@@ -204,12 +198,12 @@ export function ProjectDetail({ project: initial }: { project: Project }) {
           </div>
           {project.actual_hours != null &&
             project.actual_hours !== project.estimated_hours && (
-              <p className="mt-3 text-center text-sm">
+              <p className="mt-2 text-center text-xs">
                 <span
                   className={
                     project.actual_hours > project.estimated_hours
                       ? "text-red-500"
-                      : "text-emerald-600"
+                      : "text-emerald-500"
                   }
                 >
                   {project.actual_hours > project.estimated_hours ? "+" : ""}
@@ -218,36 +212,36 @@ export function ProjectDetail({ project: initial }: { project: Project }) {
                   ).toFixed(1)}
                   h
                 </span>{" "}
-                vs estimate
+                <span className="text-muted-foreground">vs estimate</span>
               </p>
             )}
         </CardContent>
       </Card>
 
-      {/* Quote + Profit Breakdown */}
-      <Card className="mb-6">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-lg">
-            <DollarSign className="h-5 w-5 text-emerald-600" />
-            Profit Breakdown
-          </CardTitle>
+      {/* Profit Breakdown — Hero Section */}
+      <Card className="mb-4 border-border bg-card">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-sm font-medium">Profit Breakdown</CardTitle>
           <CardDescription>
-            Quote — costs = your real take-home
+            Quote &minus; costs = your real take-home
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
-            <div className="flex justify-between rounded-md bg-neutral-50 p-3">
-              <span className="font-medium">Quote Amount</span>
-              <span className="text-lg font-bold">
-                ${calc.quote_amount.toLocaleString()}
-              </span>
+            {/* Quote — large display */}
+            <div className="rounded border border-amber-500/20 bg-amber-500/5 px-4 py-3">
+              <div className="flex items-baseline justify-between">
+                <span className="text-sm text-muted-foreground">Quote Amount</span>
+                <span className="text-2xl font-bold tabular-nums text-amber-500">
+                  ${calc.quote_amount.toLocaleString()}
+                </span>
+              </div>
             </div>
 
             {editing ? (
-              <div className="space-y-3 rounded-md border p-3">
-                <div className="space-y-2">
-                  <Label htmlFor="editMaterial">Material Cost ($)</Label>
+              <div className="space-y-3 rounded border border-border p-3">
+                <div className="space-y-1.5">
+                  <Label htmlFor="editMaterial" className="text-xs">Material Cost ($)</Label>
                   <Input
                     id="editMaterial"
                     type="number"
@@ -259,10 +253,8 @@ export function ProjectDetail({ project: initial }: { project: Project }) {
                     }
                   />
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="editSub">
-                    Subcontractor Cost ($)
-                  </Label>
+                <div className="space-y-1.5">
+                  <Label htmlFor="editSub" className="text-xs">Subcontractor Cost ($)</Label>
                   <Input
                     id="editSub"
                     type="number"
@@ -280,54 +272,57 @@ export function ProjectDetail({ project: initial }: { project: Project }) {
               </div>
             ) : (
               <>
-                <div className="flex justify-between text-neutral-600">
+                <div className="flex justify-between text-sm text-muted-foreground">
                   <span>Material Cost</span>
-                  <span>-${project.material_cost.toLocaleString()}</span>
+                  <span className="tabular-nums">-${project.material_cost.toLocaleString()}</span>
                 </div>
-                <div className="flex justify-between text-neutral-600">
+                <div className="flex justify-between text-sm text-muted-foreground">
                   <span>Subcontractor Cost</span>
-                  <span>
-                    -${project.subcontractor_cost.toLocaleString()}
-                  </span>
+                  <span className="tabular-nums">-${project.subcontractor_cost.toLocaleString()}</span>
                 </div>
               </>
             )}
 
             <Separator />
 
-            <div className="flex justify-between rounded-md bg-emerald-50 p-3">
-              <span className="font-bold text-emerald-800">Net Profit</span>
-              <span
-                className={`text-lg font-bold ${
-                  calc.net_profit >= 0
-                    ? "text-emerald-700"
-                    : "text-red-500"
-                }`}
-              >
-                ${calc.net_profit.toLocaleString()}
-              </span>
-            </div>
-
-            <div className="flex items-center justify-between rounded-md bg-blue-50 p-3">
-              <div className="flex items-center gap-2">
-                <Percent className="h-4 w-4 text-blue-600" />
-                <span className="font-medium text-blue-800">
-                  Profit Margin
+            {/* Net Profit — hero number */}
+            <div
+              className={`rounded px-4 py-3 ${
+                calc.net_profit >= 0
+                  ? "border border-emerald-500/20 bg-emerald-500/5"
+                  : "border border-red-500/20 bg-red-500/5"
+              }`}
+            >
+              <div className="flex items-baseline justify-between">
+                <span className="text-sm font-medium text-foreground">Net Profit</span>
+                <span
+                  className={`text-2xl font-bold tabular-nums ${
+                    calc.net_profit >= 0
+                      ? "text-emerald-500"
+                      : "text-red-500"
+                  }`}
+                >
+                  ${calc.net_profit.toLocaleString()}
                 </span>
               </div>
-              <Badge variant="default" className="text-base">
+            </div>
+
+            {/* Profit Margin */}
+            <div className="flex items-center justify-between rounded border border-border px-4 py-2">
+              <span className="text-sm text-muted-foreground">Profit Margin</span>
+              <span className="text-lg font-bold tabular-nums text-amber-500">
                 {calc.profit_margin}%
-              </Badge>
+              </span>
             </div>
           </div>
         </CardContent>
       </Card>
 
       {/* Notes */}
-      {project.notes && (
-        <Card className="mb-6">
-          <CardHeader>
-            <CardTitle className="text-lg">Notes</CardTitle>
+      {(project.notes || editing) && (
+        <Card className="mb-4 border-border bg-card">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium">Notes</CardTitle>
           </CardHeader>
           <CardContent>
             {editing ? (
@@ -339,7 +334,7 @@ export function ProjectDetail({ project: initial }: { project: Project }) {
                 rows={3}
               />
             ) : (
-              <p className="text-sm text-neutral-600 whitespace-pre-wrap">
+              <p className="text-sm text-muted-foreground whitespace-pre-wrap">
                 {project.notes}
               </p>
             )}
@@ -376,7 +371,6 @@ export function ProjectDetail({ project: initial }: { project: Project }) {
             className="w-full"
             onClick={() => setEditing(true)}
           >
-            <TrendingUp className="mr-2 h-4 w-4" />
             Enter Costs &amp; Complete
           </Button>
         )}
@@ -386,19 +380,19 @@ export function ProjectDetail({ project: initial }: { project: Project }) {
 }
 
 function sectionHeader(doc: jsPDF, title: string, y: number, margin: number) {
-  doc.setFillColor(244, 244, 245);
+  doc.setFillColor(30, 36, 45);
   doc.rect(margin, y, 170, 8, "F");
   doc.setFontSize(14);
-  doc.setTextColor(0, 0, 0);
+  doc.setTextColor(255, 255, 255);
   doc.text(title, margin + 2, y + 6);
   return y + 12;
 }
 
 function labeledRow(doc: jsPDF, label: string, value: string, y: number, margin: number) {
   doc.setFontSize(12);
-  doc.setTextColor(102, 102, 102);
+  doc.setTextColor(150, 150, 150);
   doc.text(label, margin, y);
-  doc.setTextColor(0, 0, 0);
+  doc.setTextColor(255, 255, 255);
   doc.text(value, margin + 170, y, { align: "right" });
   return y + 8;
 }
@@ -407,76 +401,75 @@ function generateQuotePDF(project: Project, calc: ReturnType<typeof calculatePro
   const doc = new jsPDF();
   const margin = 20;
   let y = margin;
+  const amberR = 245;
+  const amberG = 158;
+  const amberB = 11;
+
+  doc.setFillColor(30, 36, 45);
+  doc.rect(0, 0, 210, 297, "F");
 
   doc.setFontSize(22);
-  doc.setTextColor(37, 99, 235);
+  doc.setTextColor(amberR, amberG, amberB);
   doc.text("Project Report", margin, y);
   y += 10;
   doc.setFontSize(10);
-  doc.setTextColor(102, 102, 102);
+  doc.setTextColor(150, 150, 150);
   doc.text(`Generated by ProfitScope — ${new Date().toLocaleDateString()}`, margin, y);
   y += 14;
 
-  // Client section
   y = sectionHeader(doc, "Client Information", y, margin);
   y = labeledRow(doc, "Client:", project.client_name, y, margin);
   y = labeledRow(doc, "Address:", project.client_address, y, margin);
   y = labeledRow(doc, "Trade:", TRADE_LABELS[project.trade], y, margin);
   y += 8;
 
-  // Project Info
   y = sectionHeader(doc, "Project Info", y, margin);
   y = labeledRow(doc, "Status:", project.status, y, margin);
   y = labeledRow(doc, "Created:", new Date(project.created_at).toLocaleDateString(), y, margin);
   y += 8;
 
-  // Hours
   y = sectionHeader(doc, "Hours", y, margin);
   y = labeledRow(doc, "Estimated:", `${project.estimated_hours}h`, y, margin);
   y = labeledRow(doc, "Actual:", project.actual_hours != null ? `${project.actual_hours}h` : "—", y, margin);
   y += 8;
 
-  // Quote Details
   y = sectionHeader(doc, "Quote Details", y, margin);
   y = labeledRow(doc, "Hourly Rate:", `$${project.hourly_rate}/hr`, y, margin);
   y += 6;
-  doc.setDrawColor(37, 99, 235);
+  doc.setDrawColor(amberR, amberG, amberB);
   doc.setLineWidth(0.5);
   doc.line(margin, y, 170 + margin, y);
   y += 8;
   doc.setFontSize(16);
-  doc.setTextColor(37, 99, 235);
+  doc.setTextColor(amberR, amberG, amberB);
   doc.text(`Quote Amount: $${calc.quote_amount.toLocaleString()}`, margin, y);
   y += 12;
 
-  // Cost & Profit
   y = sectionHeader(doc, "Cost & Profit", y, margin);
   y = labeledRow(doc, "Material Cost:", `-$${project.material_cost.toLocaleString()}`, y, margin);
   y = labeledRow(doc, "Subcontractor Cost:", `-$${project.subcontractor_cost.toLocaleString()}`, y, margin);
   y += 6;
-  doc.setDrawColor(37, 99, 235);
+  doc.setDrawColor(amberR, amberG, amberB);
   doc.setLineWidth(0.5);
   doc.line(margin, y, 170 + margin, y);
   y += 8;
   doc.setFontSize(16);
-  doc.setTextColor(37, 99, 235);
+  doc.setTextColor(amberR, amberG, amberB);
   doc.text(`Net Profit: $${calc.net_profit.toLocaleString()}`, margin, y);
   y += 10;
   doc.setFontSize(12);
   doc.text(`Profit Margin: ${calc.profit_margin}%`, margin, y);
   y += 14;
 
-  // Notes
   if (project.notes) {
     doc.setFontSize(10);
-    doc.setTextColor(102, 102, 102);
+    doc.setTextColor(180, 180, 180);
     doc.text(`Notes: ${project.notes}`, margin, y, { maxWidth: 170 });
   }
 
-  // Footer
   doc.setFontSize(8);
-  doc.setTextColor(153, 153, 153);
-  doc.text("ProfitScope — Know what every job pays you.", margin, 280, { align: "center" });
+  doc.setTextColor(100, 100, 100);
+  doc.text("ProfitScope — Know what every job pays you.", margin, 280);
 
   doc.save(`project-report-${project.client_name.replace(/\s+/g, "-")}.pdf`);
 }
@@ -487,8 +480,9 @@ function SafePdfButton({ project, calc }: { project: Project; calc: ReturnType<t
       variant="outline"
       size="sm"
       onClick={() => generateQuotePDF(project, calc)}
+      className="h-8"
     >
-      <FileDown className="mr-2 h-4 w-4" />
+      <FileDown className="mr-1.5 h-4 w-4" />
       PDF
     </Button>
   );

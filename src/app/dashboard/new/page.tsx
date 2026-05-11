@@ -20,7 +20,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { createClient } from "@/lib/supabase/client";
 import { type Trade, TRADE_OPTIONS, calculateProject } from "@/lib/types";
@@ -28,9 +27,7 @@ import { useAuth } from "@/components/auth-provider";
 import {
   ArrowLeft,
   ArrowRight,
-  Calculator,
   Check,
-  DollarSign,
   Loader2,
 } from "lucide-react";
 import Link from "next/link";
@@ -53,19 +50,16 @@ export default function NewProjectPage() {
   const [step, setStep] = useState<Step>(1);
   const [submitting, setSubmitting] = useState(false);
 
-  // Step 1: Quote info
   const [clientName, setClientName] = useState("");
   const [clientAddress, setClientAddress] = useState("");
   const [trade, setTrade] = useState<Trade>("general");
   const [hourlyRate, setHourlyRate] = useState("");
   const [estimatedHours, setEstimatedHours] = useState("");
 
-  // Step 2: Costs & notes
   const [materialCost, setMaterialCost] = useState("");
   const [subcontractorCost, setSubcontractorCost] = useState("");
   const [notes, setNotes] = useState("");
 
-  // Live calculation preview for step 1
   const preview = calculateProject({
     hourly_rate: Number(hourlyRate) || 0,
     estimated_hours: Number(estimatedHours) || 0,
@@ -117,41 +111,41 @@ export default function NewProjectPage() {
     Number(estimatedHours) > 0;
 
   return (
-    <div className="mx-auto max-w-2xl">
+    <div className="mx-auto max-w-xl">
       {/* Header */}
-      <div className="mb-6">
+      <div className="mb-5">
         <Link
           href="/dashboard"
-          className="inline-flex items-center gap-1 text-sm text-neutral-500 hover:text-neutral-700"
+          className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
         >
-          <ArrowLeft className="h-3 w-3" />
+          <ArrowLeft className="h-3.5 w-3.5" />
           Back to Projects
         </Link>
-        <h1 className="mt-2 text-2xl font-bold tracking-tight">
+        <h1 className="mt-1.5 text-xl font-bold tracking-tight">
           New Project
         </h1>
       </div>
 
       {/* Step indicator */}
-      <div className="mb-6 flex items-center gap-2">
-        <Badge variant={step === 1 ? "default" : "secondary"}>Step 1</Badge>
-        <span className="text-sm text-neutral-400">
-          {step === 1 ? "Quote Details" : "Costs & Finish"}
+      <div className="mb-5 flex items-center gap-3">
+        <span className={`text-sm font-medium ${step === 1 ? "text-amber-500" : "text-muted-foreground"}`}>
+          1. Quote Details
         </span>
         <Separator className="flex-1" />
-        <Badge variant={step === 2 ? "default" : "outline"}>Step 2</Badge>
+        <span className={`text-sm font-medium ${step === 2 ? "text-amber-500" : "text-muted-foreground"}`}>
+          2. Costs &amp; Finish
+        </span>
       </div>
 
       {step === 1 ? (
-        <Card>
-          <CardHeader>
-            <CardTitle>Quote Details</CardTitle>
+        <Card className="border-border bg-card">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base">Quote Details</CardTitle>
             <CardDescription>
               Enter the job info to calculate your quote.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            {/* Client Name */}
             <div className="space-y-2">
               <Label htmlFor="clientName">Client Name *</Label>
               <Input
@@ -162,7 +156,6 @@ export default function NewProjectPage() {
               />
             </div>
 
-            {/* Client Address */}
             <div className="space-y-2">
               <Label htmlFor="clientAddress">Job Address *</Label>
               <Input
@@ -173,7 +166,6 @@ export default function NewProjectPage() {
               />
             </div>
 
-            {/* Trade */}
             <div className="space-y-2">
               <Label>Trade *</Label>
               <Select
@@ -193,53 +185,44 @@ export default function NewProjectPage() {
               </Select>
             </div>
 
-            {/* Hourly Rate */}
-            <div className="space-y-2">
-              <Label htmlFor="hourlyRate">Hourly Rate ($) *</Label>
-              <div className="relative">
-                <DollarSign className="absolute left-3 top-2.5 h-4 w-4 text-neutral-400" />
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="hourlyRate">Hourly Rate ($) *</Label>
                 <Input
                   id="hourlyRate"
                   type="number"
                   min="0"
                   step="0.01"
                   placeholder="85"
-                  className="pl-9"
                   value={hourlyRate}
                   onChange={(e) => setHourlyRate(e.target.value)}
                 />
               </div>
-            </div>
 
-            {/* Estimated Hours */}
-            <div className="space-y-2">
-              <Label htmlFor="estimatedHours">Estimated Hours *</Label>
-              <Input
-                id="estimatedHours"
-                type="number"
-                min="0"
-                step="0.5"
-                placeholder="8"
-                value={estimatedHours}
-                onChange={(e) => setEstimatedHours(e.target.value)}
-              />
+              <div className="space-y-2">
+                <Label htmlFor="estimatedHours">Est. Hours *</Label>
+                <Input
+                  id="estimatedHours"
+                  type="number"
+                  min="0"
+                  step="0.5"
+                  placeholder="8"
+                  value={estimatedHours}
+                  onChange={(e) => setEstimatedHours(e.target.value)}
+                />
+              </div>
             </div>
 
             {/* Live preview */}
             {preview.quote_amount > 0 && (
-              <Card className="border-blue-100 bg-blue-50">
-                <CardContent className="py-4">
-                  <div className="flex items-center gap-2 text-sm">
-                    <Calculator className="h-4 w-4 text-blue-600" />
-                    <span className="text-blue-700">
-                      Quote Amount:{" "}
-                      <strong>
-                        ${preview.quote_amount.toLocaleString()}
-                      </strong>
-                    </span>
-                  </div>
-                </CardContent>
-              </Card>
+              <div className="rounded border border-amber-500/20 bg-amber-500/5 px-4 py-3">
+                <div className="flex items-baseline justify-between">
+                  <span className="text-sm text-muted-foreground">Quote Amount</span>
+                  <span className="text-xl font-bold tabular-nums text-amber-500">
+                    ${preview.quote_amount.toLocaleString()}
+                  </span>
+                </div>
+              </div>
             )}
 
             <Button
@@ -253,53 +236,42 @@ export default function NewProjectPage() {
           </CardContent>
         </Card>
       ) : (
-        <Card>
-          <CardHeader>
-            <CardTitle>Costs &amp; Notes</CardTitle>
+        <Card className="border-border bg-card">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base">Costs &amp; Notes</CardTitle>
             <CardDescription>
-              Track your expenses so you know real profit.
+              Track expenses to see your real profit.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            {/* Material Cost */}
             <div className="space-y-2">
               <Label htmlFor="materialCost">Material Cost ($)</Label>
-              <div className="relative">
-                <DollarSign className="absolute left-3 top-2.5 h-4 w-4 text-neutral-400" />
-                <Input
-                  id="materialCost"
-                  type="number"
-                  min="0"
-                  step="0.01"
-                  placeholder="0"
-                  className="pl-9"
-                  value={materialCost}
-                  onChange={(e) => setMaterialCost(e.target.value)}
-                />
-              </div>
+              <Input
+                id="materialCost"
+                type="number"
+                min="0"
+                step="0.01"
+                placeholder="0"
+                value={materialCost}
+                onChange={(e) => setMaterialCost(e.target.value)}
+              />
             </div>
 
-            {/* Subcontractor Cost */}
             <div className="space-y-2">
               <Label htmlFor="subcontractorCost">
                 Subcontractor Cost ($)
               </Label>
-              <div className="relative">
-                <DollarSign className="absolute left-3 top-2.5 h-4 w-4 text-neutral-400" />
-                <Input
-                  id="subcontractorCost"
-                  type="number"
-                  min="0"
-                  step="0.01"
-                  placeholder="0"
-                  className="pl-9"
-                  value={subcontractorCost}
-                  onChange={(e) => setSubcontractorCost(e.target.value)}
-                />
-              </div>
+              <Input
+                id="subcontractorCost"
+                type="number"
+                min="0"
+                step="0.01"
+                placeholder="0"
+                value={subcontractorCost}
+                onChange={(e) => setSubcontractorCost(e.target.value)}
+              />
             </div>
 
-            {/* Notes */}
             <div className="space-y-2">
               <Label htmlFor="notes">Notes</Label>
               <Textarea
@@ -313,43 +285,41 @@ export default function NewProjectPage() {
 
             {/* Full preview */}
             {fullPreview.quote_amount > 0 && (
-              <Card className="border-emerald-100 bg-emerald-50">
-                <CardContent className="py-4">
-                  <div className="space-y-2 text-sm">
-                    <div className="flex justify-between">
-                      <span className="text-neutral-600">Quote</span>
-                      <span className="font-medium">
-                        ${fullPreview.quote_amount.toLocaleString()}
-                      </span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-neutral-600">Total Cost</span>
-                      <span>
-                        ${fullPreview.total_cost.toLocaleString()}
-                      </span>
-                    </div>
-                    <Separator />
-                    <div className="flex justify-between">
-                      <span className="font-medium">Net Profit</span>
-                      <span
-                        className={`font-bold ${
-                          fullPreview.net_profit >= 0
-                            ? "text-emerald-700"
-                            : "text-red-500"
-                        }`}
-                      >
-                        ${fullPreview.net_profit.toLocaleString()}
-                      </span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-neutral-600">Margin</span>
-                      <Badge variant="default">
-                        {fullPreview.profit_margin}%
-                      </Badge>
-                    </div>
+              <div className="rounded border border-border bg-card px-4 py-3">
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Quote</span>
+                    <span className="font-medium tabular-nums">
+                      ${fullPreview.quote_amount.toLocaleString()}
+                    </span>
                   </div>
-                </CardContent>
-              </Card>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Total Cost</span>
+                    <span className="tabular-nums">
+                      ${fullPreview.total_cost.toLocaleString()}
+                    </span>
+                  </div>
+                  <Separator />
+                  <div className="flex justify-between">
+                    <span className="font-medium">Net Profit</span>
+                    <span
+                      className={`text-base font-bold tabular-nums ${
+                        fullPreview.net_profit >= 0
+                          ? "text-emerald-500"
+                          : "text-red-500"
+                      }`}
+                    >
+                      ${fullPreview.net_profit.toLocaleString()}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Margin</span>
+                    <span className="font-medium tabular-nums">
+                      {fullPreview.profit_margin}%
+                    </span>
+                  </div>
+                </div>
+              </div>
             )}
 
             <div className="flex gap-2">

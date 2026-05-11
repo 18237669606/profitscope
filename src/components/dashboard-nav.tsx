@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useAuth } from "@/components/auth-provider";
-import { Menu, Plus, LayoutDashboard, Home } from "lucide-react";
+import { Menu, Plus } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 export function DashboardNav() {
@@ -20,8 +20,8 @@ export function DashboardNav() {
   const initials = user?.email?.slice(0, 2).toUpperCase() ?? "U";
 
   return (
-    <header className="sticky top-0 z-50 border-b bg-white">
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
+    <header className="sticky top-0 z-50 border-b border-border bg-card">
+      <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-2.5">
         {/* Left */}
         <div className="flex items-center gap-4">
           {/* Mobile menu */}
@@ -37,19 +37,19 @@ export function DashboardNav() {
               <nav className="mt-8 flex flex-col gap-2">
                 <Link
                   href="/"
-                  className="rounded-md px-3 py-2 text-sm font-medium hover:bg-neutral-100"
+                  className="rounded px-3 py-2 text-sm font-medium hover:bg-accent"
                 >
                   Home
                 </Link>
                 <Link
                   href="/dashboard"
-                  className="rounded-md px-3 py-2 text-sm font-medium hover:bg-neutral-100"
+                  className="rounded px-3 py-2 text-sm font-medium hover:bg-accent"
                 >
                   Projects
                 </Link>
                 <Link
                   href="/dashboard/new"
-                  className="rounded-md px-3 py-2 text-sm font-medium hover:bg-neutral-100"
+                  className="rounded px-3 py-2 text-sm font-medium hover:bg-accent"
                 >
                   New Project
                 </Link>
@@ -57,18 +57,17 @@ export function DashboardNav() {
             </SheetContent>
           </Sheet>
 
-          <Link href="/" className="text-lg font-bold tracking-tight">
+          <Link href="/" className="text-base font-bold tracking-tight text-foreground">
             ProfitScope
           </Link>
 
           {/* Desktop nav */}
-          <nav className="hidden md:flex md:items-center md:gap-1">
+          <nav className="hidden md:flex md:items-center md:gap-0.5">
             <Link href="/">
               <Button
                 variant="ghost"
                 size="sm"
               >
-                <Home className="mr-2 h-4 w-4" />
                 Home
               </Button>
             </Link>
@@ -77,7 +76,6 @@ export function DashboardNav() {
                 variant={pathname === "/dashboard" ? "secondary" : "ghost"}
                 size="sm"
               >
-                <LayoutDashboard className="mr-2 h-4 w-4" />
                 Projects
               </Button>
             </Link>
@@ -86,8 +84,8 @@ export function DashboardNav() {
                 variant={pathname === "/dashboard/new" ? "secondary" : "ghost"}
                 size="sm"
               >
-                <Plus className="mr-2 h-4 w-4" />
-                New Project
+                <Plus className="mr-1.5 h-4 w-4" />
+                New
               </Button>
             </Link>
           </nav>
@@ -98,14 +96,14 @@ export function DashboardNav() {
           <DropdownMenuTrigger
             render={
               <Button variant="ghost" size="icon" className="rounded-full">
-                <Avatar className="h-8 w-8">
+                <Avatar className="h-7 w-7">
                   <AvatarFallback className="text-xs">{initials}</AvatarFallback>
                 </Avatar>
               </Button>
             }
           />
           <DropdownMenuContent align="end">
-            <DropdownMenuItem className="text-xs text-neutral-500" disabled>
+            <DropdownMenuItem className="text-xs text-muted-foreground" disabled>
               {user?.email}
             </DropdownMenuItem>
             <DropdownMenuItem onClick={signOut}>Sign Out</DropdownMenuItem>

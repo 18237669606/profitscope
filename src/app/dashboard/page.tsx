@@ -4,7 +4,7 @@ import { type Project, calculateProject } from "@/lib/types";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Plus, DollarSign, TrendingUp, Percent, Briefcase, Crown } from "lucide-react";
+import { Plus } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -24,59 +24,25 @@ export default async function DashboardPage() {
 
   return (
     <div>
-      <div className="mb-6 flex items-center justify-between">
+      <div className="mb-5 flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Projects</h1>
-          <p className="text-neutral-500">
+          <h1 className="text-xl font-bold tracking-tight">Projects</h1>
+          <p className="text-sm text-muted-foreground">
             {projects?.length ?? 0} project{(projects?.length ?? 0) !== 1 ? "s" : ""}
           </p>
         </div>
         <Link href="/dashboard/new">
-          <Button>
-            <Plus className="mr-2 h-4 w-4" />
+          <Button size="sm">
+            <Plus className="mr-1.5 h-4 w-4" />
             New Project
           </Button>
         </Link>
       </div>
 
-      {/* Monthly summary */}
       <MonthlySummary stats={monthlyStats} />
 
-      {/* Subscription status */}
-      <SubscriptionBanner />
-
       <ProjectList projects={projects ?? []} />
-
-      {/* Footer */}
-      <footer className="mt-12 border-t pt-6 text-center text-xs text-neutral-400">
-        Built for contractors who want to know their real profit.
-      </footer>
     </div>
-  );
-}
-
-function SubscriptionBanner() {
-  return (
-    <Card className="mb-6 border-blue-100 bg-gradient-to-r from-blue-50 to-white">
-      <CardContent className="flex items-center justify-between py-4">
-        <div className="flex items-center gap-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-full bg-blue-100">
-            <Crown className="h-4 w-4 text-blue-600" />
-          </div>
-          <div>
-            <p className="text-sm font-medium">Pro Plan</p>
-            <p className="text-xs text-neutral-500">$12/mo or $10/mo annual</p>
-          </div>
-        </div>
-        <Link
-          href="https://gumroad.com"
-          target="_blank"
-          className="text-sm font-medium text-blue-600 hover:text-blue-700"
-        >
-          Manage Subscription &rarr;
-        </Link>
-      </CardContent>
-    </Card>
   );
 }
 
@@ -119,74 +85,66 @@ type MonthlyStats = ReturnType<typeof computeMonthlyStats>;
 
 function MonthlySummary({ stats }: { stats: MonthlyStats }) {
   return (
-    <div className="mb-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-      <Card>
-        <CardContent className="flex items-center gap-4 pt-6">
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-50">
-            <Briefcase className="h-5 w-5 text-blue-600" />
-          </div>
-          <div>
-            <p className="text-xs text-neutral-500">{stats.monthLabel}</p>
-            <p className="text-xl font-bold">
-              {stats.count}{" "}
-              <span className="text-sm font-normal text-neutral-400">
-                projects
-              </span>
-            </p>
-            {stats.completedCount > 0 && (
-              <p className="text-xs text-emerald-600">
-                {stats.completedCount} completed
-              </p>
-            )}
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardContent className="flex items-center gap-4 pt-6">
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-50">
-            <DollarSign className="h-5 w-5 text-emerald-600" />
-          </div>
-          <div>
-            <p className="text-xs text-neutral-500">Revenue</p>
-            <p className="text-xl font-bold">
-              ${stats.totalQuote.toLocaleString()}
-            </p>
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardContent className="flex items-center gap-4 pt-6">
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-50">
-            <TrendingUp className="h-5 w-5 text-emerald-600" />
-          </div>
-          <div>
-            <p className="text-xs text-neutral-500">Net Profit</p>
-            <p
-              className={`text-xl font-bold ${
-                stats.totalProfit >= 0 ? "text-emerald-700" : "text-red-500"
-              }`}
-            >
-              ${stats.totalProfit.toLocaleString()}
-            </p>
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardContent className="flex items-center gap-4 pt-6">
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-50">
-            <Percent className="h-5 w-5 text-blue-600" />
-          </div>
-          <div>
-            <p className="text-xs text-neutral-500">Avg Margin</p>
-            <p className="text-xl font-bold">
-              {stats.avgMargin.toFixed(1)}%
-            </p>
-          </div>
-        </CardContent>
-      </Card>
+    <div className="mb-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      <StatCard
+        label={stats.monthLabel}
+        value={stats.count.toString()}
+        suffix="projects"
+        sub={stats.completedCount > 0 ? `${stats.completedCount} completed` : undefined}
+      />
+      <StatCard
+        label="Revenue"
+        value={`$${stats.totalQuote.toLocaleString()}`}
+        accent="default"
+      />
+      <StatCard
+        label="Net Profit"
+        value={`$${stats.totalProfit.toLocaleString()}`}
+        accent={stats.totalProfit >= 0 ? "positive" : "negative"}
+      />
+      <StatCard
+        label="Avg Margin"
+        value={`${stats.avgMargin.toFixed(1)}%`}
+        accent="default"
+      />
     </div>
+  );
+}
+
+function StatCard({
+  label,
+  value,
+  suffix,
+  sub,
+  accent = "default",
+}: {
+  label: string;
+  value: string;
+  suffix?: string;
+  sub?: string;
+  accent?: "default" | "positive" | "negative";
+}) {
+  const borderColor =
+    accent === "positive"
+      ? "border-l-emerald-500"
+      : accent === "negative"
+        ? "border-l-red-500"
+        : "border-l-amber-500";
+
+  return (
+    <Card className="overflow-hidden border-l-2 bg-card">
+      <CardContent className={`py-3 pl-4 pr-4 ${borderColor}`}>
+        <p className="text-xs text-muted-foreground">{label}</p>
+        <p className="mt-0.5 text-lg font-bold tracking-tight tabular-nums">
+          {value}
+          {suffix && (
+            <span className="ml-1 text-sm font-normal text-muted-foreground">
+              {suffix}
+            </span>
+          )}
+        </p>
+        {sub && <p className="mt-0.5 text-xs text-emerald-500">{sub}</p>}
+      </CardContent>
+    </Card>
   );
 }

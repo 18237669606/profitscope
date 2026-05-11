@@ -10,9 +10,9 @@ export default function DashboardLayout({
 }) {
   return (
     <AuthProvider>
-      <div className="min-h-screen bg-neutral-50">
+      <div className="dark min-h-screen bg-background">
         <DashboardNav />
-        <main className="mx-auto max-w-6xl px-4 py-8">{children}</main>
+        <main className="mx-auto max-w-6xl px-4 py-6">{children}</main>
       </div>
     </AuthProvider>
   );

@@ -1,122 +1,127 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Calculator, FileText, TrendingUp } from "lucide-react";
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen overflow-x-hidden bg-gradient-to-b from-white to-neutral-50">
+    <div className="min-h-screen bg-white text-slate-800">
       {/* Nav */}
-      <header className="border-b">
-        <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-4">
-          <span className="text-xl font-bold tracking-tight">
+      <header className="border-b border-slate-200 bg-slate-900">
+        <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3">
+          <span className="text-lg font-bold tracking-tight text-white">
             ProfitScope
           </span>
           <div className="flex items-center gap-3">
             <Link href="/login">
-              <Button variant="ghost">Sign In</Button>
+              <Button variant="ghost" className="text-slate-300 hover:text-white hover:bg-slate-800">
+                Sign In
+              </Button>
             </Link>
             <Link href="https://gumroad.com" target="_blank">
-              <Button>Get Started — $12/mo</Button>
+              <Button size="sm">Get Started — $12/mo</Button>
             </Link>
           </div>
         </div>
       </header>
 
       {/* Hero */}
-      <section className="mx-auto max-w-5xl px-4 py-24 text-center">
-        <h1 className="text-3xl font-bold tracking-tight sm:text-5xl md:text-6xl">
-          Know What Every Job
-          <br />
-          <span className="text-blue-600">Actually Pays You</span>
-        </h1>
-        <p className="mx-auto mt-6 max-w-2xl text-base text-neutral-600 sm:text-lg">
-          You quote jobs all day. But do you know your real profit after
-          materials and subs? ProfitScope does the math so you can stop guessing.
-        </p>
-        <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row sm:gap-4">
-          <Link href="https://gumroad.com" target="_blank">
-            <Button size="lg" className="w-full px-8 sm:w-auto">
-              Start Free Trial
-            </Button>
-          </Link>
-          <Link href="/login">
-            <Button size="lg" variant="outline" className="w-full sm:w-auto">
-              Sign In
-            </Button>
-          </Link>
+      <section className="border-b border-slate-200 bg-slate-900 px-4 py-16 sm:py-24">
+        <div className="mx-auto max-w-3xl text-center">
+          <h1 className="text-3xl font-bold tracking-tight text-white sm:text-4xl md:text-5xl">
+            Know what every job
+            <br />
+            <span className="text-amber-500">actually pays you.</span>
+          </h1>
+          <p className="mx-auto mt-5 max-w-xl text-base text-slate-400 sm:text-lg">
+            Quote the job. Track your costs. See your real profit. The tool
+            built for contractors who want to stop guessing and start earning.
+          </p>
+          <div className="mt-8 flex items-center justify-center gap-3">
+            <Link href="https://gumroad.com" target="_blank">
+              <Button size="lg" className="px-8">
+                Start Free Trial
+              </Button>
+            </Link>
+            <Link href="/login">
+              <Button size="lg" variant="outline" className="border-slate-600 text-slate-300 hover:bg-slate-800 hover:text-white">
+                Sign In
+              </Button>
+            </Link>
+          </div>
         </div>
       </section>
 
-      {/* Features */}
-      <section className="mx-auto max-w-5xl px-4 py-20">
-        <div className="grid gap-8 sm:grid-cols-3">
-          <Card>
-            <CardHeader>
-              <Calculator className="mb-2 h-8 w-8 text-blue-600" />
-              <CardTitle>Auto-Calculate Quotes</CardTitle>
-              <CardDescription>
-                Pick your trade, set hours × rate. Your quote is ready.
-              </CardDescription>
-            </CardHeader>
-          </Card>
-          <Card>
-            <CardHeader>
-              <TrendingUp className="mb-2 h-8 w-8 text-emerald-600" />
-              <CardTitle>Real Profit Numbers</CardTitle>
-              <CardDescription>
-                Material + sub costs deducted. See your margin instantly.
-              </CardDescription>
-            </CardHeader>
-          </Card>
-          <Card>
-            <CardHeader>
-              <FileText className="mb-2 h-8 w-8 text-purple-600" />
-              <CardTitle>Professional PDF Quotes</CardTitle>
-              <CardDescription>
-                Export clean quotes your clients will trust.
-              </CardDescription>
-            </CardHeader>
-          </Card>
+      {/* How it works */}
+      <section className="px-4 py-20">
+        <div className="mx-auto max-w-3xl">
+          <h2 className="text-center text-2xl font-bold tracking-tight">
+            Three steps. One number that matters.
+          </h2>
+
+          <div className="mt-14 grid gap-12 sm:grid-cols-3">
+            <Step
+              num="1"
+              title="Enter the job"
+              description="Client name, trade, hourly rate, estimated hours. Your quote is calculated instantly."
+            />
+            <Step
+              num="2"
+              title="Track your costs"
+              description="Log material expenses and subcontractor costs as they come in. No spreadsheets."
+            />
+            <Step
+              num="3"
+              title="See your profit"
+              description="Net profit and margin, updated live. Export a PDF report for your records or your client."
+            />
+          </div>
         </div>
       </section>
 
       {/* Pricing */}
-      <section className="mx-auto max-w-5xl px-4 py-20 text-center">
-        <h2 className="text-3xl font-bold">One Simple Plan</h2>
-        <p className="mt-2 text-neutral-600">
-          No tiers. No hidden fees. Just profit clarity.
-        </p>
-        <Card className="mx-auto mt-8 max-w-sm">
-          <CardContent className="pt-6">
-            <div className="text-4xl font-bold">$12</div>
-            <div className="text-neutral-500">per month</div>
-            <div className="mt-2 rounded-md bg-blue-50 px-3 py-1.5 text-sm font-medium text-blue-700">
-              $10/mo billed annually — save 17%
-            </div>
-            <ul className="mt-6 space-y-2 text-left text-sm text-neutral-600">
-              <li>✓ Unlimited projects</li>
-              <li>✓ Profit calculations</li>
-              <li>✓ PDF quote exports</li>
-              <li>✓ Mobile-friendly</li>
-            </ul>
-            <Link href="https://gumroad.com" target="_blank" className="mt-6 block">
-              <Button className="w-full">Get Started</Button>
+      <section className="border-t border-slate-200 bg-slate-50 px-4 py-16">
+        <div className="mx-auto max-w-lg text-center">
+          <h2 className="text-xl font-bold tracking-tight">
+            $12<span className="text-slate-400 font-normal">/month</span>
+          </h2>
+          <p className="mt-1 text-sm text-slate-500">
+            $10/mo billed annually. No tiers, no hidden fees. Unlimited projects.
+          </p>
+          <div className="mt-6">
+            <Link href="https://gumroad.com" target="_blank">
+              <Button size="lg" className="px-10">
+                Get Started
+              </Button>
             </Link>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </section>
 
       {/* Footer */}
-      <footer className="border-t py-8 text-center text-sm text-neutral-400">
-        © {new Date().getFullYear()} ProfitScope. Built for contractors.
+      <footer className="border-t border-slate-200 py-6 text-center text-xs text-slate-400">
+        &copy; {new Date().getFullYear()} ProfitScope. Built for contractors.
       </footer>
+    </div>
+  );
+}
+
+function Step({
+  num,
+  title,
+  description,
+}: {
+  num: string;
+  title: string;
+  description: string;
+}) {
+  return (
+    <div>
+      <div className="mb-3 flex h-8 w-8 items-center justify-center rounded border border-slate-700 bg-slate-900 text-xs font-bold text-amber-500">
+        {num}
+      </div>
+      <h3 className="text-sm font-semibold tracking-tight">{title}</h3>
+      <p className="mt-2 text-sm leading-relaxed text-slate-500">
+        {description}
+      </p>
     </div>
   );
 }
