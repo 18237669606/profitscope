@@ -85,7 +85,7 @@ export default function LandingPage() {
             $12<span className="text-slate-400 font-normal">/month</span>
           </h2>
           <p className="mt-1 text-sm text-slate-500">
-            $10/mo billed annually. No tiers, no hidden fees. Unlimited projects.
+            No tiers, no hidden fees. Unlimited projects.
           </p>
           <div className="mt-6">
             <PayPalSubscribeButton />
