@@ -51,7 +51,35 @@ export default function PayPalSubscribeButton({
             return actions.subscription.create({ plan_id: PLAN_ID });
           },
           onApprove: (data: { subscriptionID: string }) => {
-            alert(data.subscriptionID);
+            // Set cookie so auth callback can link subscription to user
+            document.cookie = `pending_sub_id=${data.subscriptionID}; path=/; max-age=3600; SameSite=Lax`;
+
+            // Show success message
+            const pricing = document.getElementById("pricing");
+            if (pricing) {
+              const msg = document.createElement("div");
+              msg.className =
+                "mt-4 rounded-md bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-700";
+              msg.textContent =
+                "Subscription created! Sign in to access your account.";
+              pricing.appendChild(msg);
+            }
+
+            setTimeout(() => {
+              window.location.href = "/login?subscribed=true";
+            }, 2000);
+          },
+          onError: (err: Error) => {
+            console.error("PayPal error:", err);
+            const pricing = document.getElementById("pricing");
+            if (pricing) {
+              const msg = document.createElement("div");
+              msg.className =
+                "mt-4 rounded-md bg-red-50 px-4 py-3 text-sm font-medium text-red-700";
+              msg.textContent =
+                "Payment failed. Please try again or use a different payment method.";
+              pricing.appendChild(msg);
+            }
           },
         })
         .render("#paypal-button-container-P-42559609FD571070ANIBKYKI");

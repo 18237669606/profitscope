@@ -61,3 +61,44 @@ CREATE TRIGGER set_updated_at
 -- 5. Index for faster queries
 CREATE INDEX idx_projects_user_id ON projects(user_id);
 CREATE INDEX idx_projects_created_at ON projects(created_at DESC);
+
+-- 6. Subscriptions table (PayPal webhook)
+CREATE TABLE IF NOT EXISTS subscriptions (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  paypal_subscription_id TEXT UNIQUE NOT NULL,
+  user_id UUID REFERENCES auth.users(id) ON DELETE SET NULL,
+  plan_id TEXT,
+  status TEXT DEFAULT 'active' CHECK (status IN ('active', 'cancelled', 'suspended', 'expired')),
+  paypal_email TEXT,
+  payer_id TEXT,
+  created_at TIMESTAMPTZ DEFAULT now(),
+  updated_at TIMESTAMPTZ DEFAULT now()
+);
+
+ALTER TABLE subscriptions ENABLE ROW LEVEL SECURITY;
+
+-- Admin-only access (webhook uses service_role, bypasses RLS)
+CREATE POLICY "Service role can manage subscriptions"
+  ON subscriptions
+  USING (true)
+  WITH CHECK (true);
+
+CREATE INDEX idx_subscriptions_paypal_id ON subscriptions(paypal_subscription_id);
+CREATE INDEX idx_subscriptions_user_id ON subscriptions(user_id);
+
+-- 7. Payment events log
+CREATE TABLE IF NOT EXISTS payment_events (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  event_type TEXT NOT NULL,
+  paypal_event_id TEXT,
+  resource_id TEXT,
+  raw_body TEXT,
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
+ALTER TABLE payment_events ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Service role can manage payment_events"
+  ON payment_events
+  USING (true)
+  WITH CHECK (true);

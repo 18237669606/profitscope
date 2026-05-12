@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -21,6 +22,8 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const { signInWithMagicLink } = useAuth();
+  const searchParams = useSearchParams();
+  const subscribed = searchParams.get("subscribed");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -47,6 +50,12 @@ export default function LoginPage() {
           </Link>
         </div>
       </header>
+
+      {subscribed === "true" && (
+        <div className="mx-auto mt-4 max-w-md rounded-md bg-emerald-900/50 px-4 py-3 text-center text-sm font-medium text-emerald-300">
+          Subscription successful! Sign in below to access your account.
+        </div>
+      )}
 
       <div className="flex flex-1 items-center justify-center px-4">
         <Card className="w-full max-w-md border-slate-700 bg-slate-800 text-white">
