@@ -1,8 +1,12 @@
 import type { Metadata } from "next";
+import dynamic from "next/dynamic";
 import localFont from "next/font/local";
 import "./globals.css";
-import { Toaster } from "@/components/ui/sonner";
 import { cn } from "@/lib/utils";
+
+const Toaster = dynamic(() => import("@/components/ui/sonner").then((m) => ({ default: m.Toaster })), {
+  ssr: false,
+});
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",

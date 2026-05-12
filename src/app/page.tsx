@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import PayPalSubscribeButton from "@/components/paypal-subscribe-button";
 
 export default function LandingPage() {
   return (
@@ -16,9 +17,9 @@ export default function LandingPage() {
                 Sign In
               </Button>
             </Link>
-            <Link href="https://howlwind1788.gumroad.com/l/stkml" target="_blank">
+            <a href="#pricing">
               <Button size="sm">Get Started — $12/mo</Button>
-            </Link>
+            </a>
           </div>
         </div>
       </header>
@@ -36,11 +37,11 @@ export default function LandingPage() {
             built for contractors who want to stop guessing and start earning.
           </p>
           <div className="mt-8 flex items-center justify-center gap-3">
-            <Link href="https://howlwind1788.gumroad.com/l/stkml" target="_blank">
+            <a href="#pricing">
               <Button size="lg" className="px-8">
                 Start Free Trial
               </Button>
-            </Link>
+            </a>
             <Link href="/login">
               <Button size="lg" variant="outline" className="border-slate-600 text-slate-400 bg-transparent hover:text-slate-200 hover:bg-slate-800">
                 Sign In
@@ -78,7 +79,7 @@ export default function LandingPage() {
       </section>
 
       {/* Pricing */}
-      <section className="border-t border-slate-200 bg-slate-50 px-4 py-16">
+      <section id="pricing" className="border-t border-slate-200 bg-slate-50 px-4 py-16">
         <div className="mx-auto max-w-lg text-center">
           <h2 className="text-xl font-bold tracking-tight">
             $12<span className="text-slate-400 font-normal">/month</span>
@@ -87,11 +88,7 @@ export default function LandingPage() {
             $10/mo billed annually. No tiers, no hidden fees. Unlimited projects.
           </p>
           <div className="mt-6">
-            <Link href="https://howlwind1788.gumroad.com/l/stkml" target="_blank">
-              <Button size="lg" className="px-10">
-                Get Started
-              </Button>
-            </Link>
+            <PayPalSubscribeButton />
           </div>
         </div>
       </section>
