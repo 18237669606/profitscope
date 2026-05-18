@@ -45,5 +45,39 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
+  // Check subscription for dashboard routes
+  if (user && request.nextUrl.pathname.startsWith("/dashboard")) {
+    // Try linking an unlinked subscription by email first
+    const { data: unlinked } = await supabase
+      .from("subscriptions")
+      .select("id")
+      .is("user_id", null)
+      .eq("customer_email", user.email)
+      .in("status", ["active", "trialing"])
+      .maybeSingle();
+
+    if (unlinked) {
+      await supabase
+        .from("subscriptions")
+        .update({ user_id: user.id })
+        .eq("id", unlinked.id);
+    }
+
+    // Check for active subscription
+    const { data: subscription } = await supabase
+      .from("subscriptions")
+      .select("id, status, trial_ends_at")
+      .eq("user_id", user.id)
+      .in("status", ["active", "trialing", "paused"])
+      .maybeSingle();
+
+    if (!subscription) {
+      const url = request.nextUrl.clone();
+      url.pathname = "/";
+      url.searchParams.set("reason", "no_subscription");
+      return NextResponse.redirect(url);
+    }
+  }
+
   return supabaseResponse;
 }

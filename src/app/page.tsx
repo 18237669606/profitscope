@@ -1,8 +1,26 @@
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import PayPalSubscribeButton from "@/components/paypal-subscribe-button";
 
 export default function LandingPage() {
+  const [checkingOut, setCheckingOut] = useState(false);
+
+  const handleStartTrial = async () => {
+    setCheckingOut(true);
+    try {
+      const res = await fetch("/api/create-checkout", { method: "POST" });
+      const data = await res.json();
+      if (data.checkout_url) {
+        window.location.href = data.checkout_url;
+      }
+    } catch (err) {
+      console.error("Checkout error:", err);
+      setCheckingOut(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-white text-slate-800">
       {/* Nav */}
@@ -88,7 +106,13 @@ export default function LandingPage() {
             No tiers, no hidden fees. Unlimited projects.
           </p>
           <div className="mt-6">
-            <PayPalSubscribeButton />
+            <Button
+              size="lg"
+              onClick={handleStartTrial}
+              disabled={checkingOut}
+            >
+              {checkingOut ? "Redirecting..." : "Start 7-Day Free Trial"}
+            </Button>
           </div>
         </div>
       </section>

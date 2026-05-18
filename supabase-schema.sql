@@ -62,35 +62,56 @@ CREATE TRIGGER set_updated_at
 CREATE INDEX idx_projects_user_id ON projects(user_id);
 CREATE INDEX idx_projects_created_at ON projects(created_at DESC);
 
--- 6. Subscriptions table (PayPal webhook)
+-- 6. Subscriptions table (Creem webhook)
 CREATE TABLE IF NOT EXISTS subscriptions (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  paypal_subscription_id TEXT UNIQUE NOT NULL,
+  provider_subscription_id TEXT UNIQUE NOT NULL,
+  provider TEXT NOT NULL DEFAULT 'creem',
   user_id UUID REFERENCES auth.users(id) ON DELETE SET NULL,
-  plan_id TEXT,
-  status TEXT DEFAULT 'active' CHECK (status IN ('active', 'cancelled', 'suspended', 'expired')),
-  paypal_email TEXT,
-  payer_id TEXT,
+  customer_email TEXT,
+  status TEXT DEFAULT 'active' CHECK (status IN ('trialing', 'active', 'paused', 'cancelled', 'expired')),
+  trial_ends_at TIMESTAMPTZ,
   created_at TIMESTAMPTZ DEFAULT now(),
   updated_at TIMESTAMPTZ DEFAULT now()
 );
 
 ALTER TABLE subscriptions ENABLE ROW LEVEL SECURITY;
 
--- Admin-only access (webhook uses service_role, bypasses RLS)
+-- Service role can manage subscriptions (used by webhook)
 CREATE POLICY "Service role can manage subscriptions"
   ON subscriptions
   USING (true)
   WITH CHECK (true);
 
-CREATE INDEX idx_subscriptions_paypal_id ON subscriptions(paypal_subscription_id);
+-- Authenticated users can read their own subscription
+CREATE POLICY "Users can view their own subscription"
+  ON subscriptions FOR SELECT
+  USING (auth.uid() = user_id);
+
+CREATE INDEX idx_subscriptions_provider_id ON subscriptions(provider_subscription_id);
 CREATE INDEX idx_subscriptions_user_id ON subscriptions(user_id);
+CREATE INDEX idx_subscriptions_customer_email ON subscriptions(customer_email);
+
+-- Migration for existing table (run if upgrading from PayPal schema):
+-- ALTER TABLE subscriptions RENAME COLUMN paypal_subscription_id TO provider_subscription_id;
+-- ALTER TABLE subscriptions ADD COLUMN IF NOT EXISTS provider TEXT DEFAULT 'paypal';
+-- ALTER TABLE subscriptions ADD COLUMN IF NOT EXISTS trial_ends_at TIMESTAMPTZ;
+-- ALTER TABLE subscriptions ADD COLUMN IF NOT EXISTS customer_email TEXT;
+-- ALTER TABLE subscriptions DROP COLUMN IF EXISTS payer_id;
+-- ALTER TABLE subscriptions DROP COLUMN IF EXISTS paypal_email;
+-- ALTER TABLE subscriptions DROP COLUMN IF EXISTS plan_id;
+-- ALTER TABLE subscriptions DROP CONSTRAINT IF EXISTS subscriptions_status_check;
+-- ALTER TABLE subscriptions ADD CONSTRAINT subscriptions_status_check CHECK (status IN ('trialing', 'active', 'paused', 'cancelled', 'expired'));
+-- DROP INDEX IF EXISTS idx_subscriptions_paypal_id;
+-- CREATE INDEX IF NOT EXISTS idx_subscriptions_provider_id ON subscriptions(provider_subscription_id);
+-- CREATE INDEX IF NOT EXISTS idx_subscriptions_customer_email ON subscriptions(customer_email);
 
 -- 7. Payment events log
 CREATE TABLE IF NOT EXISTS payment_events (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   event_type TEXT NOT NULL,
-  paypal_event_id TEXT,
+  provider TEXT DEFAULT 'creem',
+  provider_event_id TEXT,
   resource_id TEXT,
   raw_body TEXT,
   created_at TIMESTAMPTZ DEFAULT now()
