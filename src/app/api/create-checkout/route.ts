@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { createCheckout } from "@/lib/creem";
 
 export async function POST() {
-  const origin = process.env.NEXT_PUBLIC_SITE_URL || "https://profitscope-ten.vercel.app";
+  const origin = process.env.NEXT_PUBLIC_SITE_URL || "https://profit-scope.com";
 
   try {
     const checkout = await createCheckout(`${origin}/login?subscribed=true`);
