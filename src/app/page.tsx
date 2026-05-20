@@ -129,6 +129,9 @@ export default function LandingPage() {
           <Link href="/terms" className="hover:text-slate-600 underline">
             Terms of Service
           </Link>
+        </p>
+        <p>
+          Support:{" "}
           <a href="mailto:1161698627@qq.com" className="hover:text-slate-600 underline">
             1161698627@qq.com
           </a>
