@@ -1,9 +1,9 @@
 {
   "redirects": [
     {
-      "source": "/(.*)",
+      "source": "/:path*",
       "has": [{ "type": "host", "value": "www.profit-scope.com" }],
-      "destination": "https://profit-scope.com/:1",
+      "destination": "https://profit-scope.com/:path*",
       "permanent": true
     }
   ]
