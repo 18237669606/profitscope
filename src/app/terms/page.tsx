@@ -76,8 +76,8 @@ export default function TermsPage() {
             <h2 className="text-lg font-semibold text-slate-800">8. Contact</h2>
             <p className="mt-2">
               For questions about these terms, contact us at{" "}
-              <a href="mailto:profitscope@qq.com" className="text-blue-600 hover:underline">
-                profitscope@qq.com
+              <a href="mailto:1161698627@qq.com" className="text-blue-600 hover:underline">
+                1161698627@qq.com
               </a>.
             </p>
           </section>

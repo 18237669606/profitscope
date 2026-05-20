@@ -58,8 +58,8 @@ export default function PrivacyPage() {
             <h2 className="text-lg font-semibold text-slate-800">6. Contact</h2>
             <p className="mt-2">
               For privacy-related inquiries, contact us at{" "}
-              <a href="mailto:profitscope@qq.com" className="text-blue-600 hover:underline">
-                profitscope@qq.com
+              <a href="mailto:1161698627@qq.com" className="text-blue-600 hover:underline">
+                1161698627@qq.com
               </a>.
             </p>
           </section>
