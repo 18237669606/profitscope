@@ -50,7 +50,7 @@ export default function TermsPage() {
           <section>
             <h2 className="text-lg font-semibold text-slate-800">5. Limitation of Liability</h2>
             <p className="mt-2">
-              ProfitScope is provided on an "as is" basis. We make no warranties regarding the accuracy
+              ProfitScope is provided on an &quot;as is&quot; basis. We make no warranties regarding the accuracy
               of calculations or availability of the service. We are not liable for any damages arising
               from your use of the service.
             </p>
