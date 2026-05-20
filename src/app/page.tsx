@@ -118,8 +118,21 @@ export default function LandingPage() {
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-slate-200 py-6 text-center text-xs text-slate-400">
-        &copy; {new Date().getFullYear()} ProfitScope. Built for contractors.
+      <footer className="border-t border-slate-200 py-6 text-center text-xs text-slate-400 space-y-1">
+        <p>
+          &copy; {new Date().getFullYear()} ProfitScope. Built for contractors.
+        </p>
+        <p className="space-x-3">
+          <Link href="/privacy" className="hover:text-slate-600 underline">
+            Privacy Policy
+          </Link>
+          <Link href="/terms" className="hover:text-slate-600 underline">
+            Terms of Service
+          </Link>
+          <a href="mailto:profitscope@qq.com" className="hover:text-slate-600 underline">
+            profitscope@qq.com
+          </a>
+        </p>
       </footer>
     </div>
   );
